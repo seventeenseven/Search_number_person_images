@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>411 website</title>
+</head>
+<body>
+    <h2>Persons corresponding</h2>
+    {% for peep in people %}
+        <a href="{% url 'person' id=peep.id %}">{{ peep.name }}</a><br>
+    {% endfor %}
+</body>
+</html>

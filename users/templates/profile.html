@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+{% load crispy_forms_tags %}
+<head>
+    <meta charset="UTF-8">
+    <title>411 Search</title>
+        <link href="{% static 'main.css' %}" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!------ Include the above in your HEAD tag ---------->
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+</head>
+
+<body>
+<div id="flipkart-navbar">
+    <div class="container">
+        <div class="row row1">
+            <ul class="largenav pull-right">
+                {% if user.is_authenticated %}
+                <li class="upper-links" style="text-decoration:underline; font-weight:bold">Log in as {{ user.username }}</li>
+                <li class="upper-links"><a class="links" href="{% url 'index' %}">Home</a></li>
+                <li class="upper-links"><a class="links" href="{% url 'profile' %}">Profile</a></li>
+                <li class="upper-links"><a class="links" href="{% url 'logout' %}">Log out</a></li>
+                {% else %}
+                <li class="upper-links"><a class="links" href="{% url 'login' %}">Login</a></li>
+                <li class="upper-links"><a class="links" href="{% url 'register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div>
+    {% if messages %}
+        <ul>
+            {% for msg in messages %}
+                <li {% if msg.tags %} class="alert alert-{{ msg.tags }}"{% endif %}>{{ msg }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col col-md-5">
+            <img height="200" width="150" src="{{ user.profile.profile_image.url }}" style="border-radius: 50%;"><br><br>
+        </div>
+        <div class="col col-md-6" style="font-size:20px; font-weight:bold">Hello {{ user.username }},<br> Mail: {{ user.email }}</div>
+    </div>
+    <div class="row">
+        <div class="col col-md-7" style="display: grid;grid-template-columns: auto auto auto auto;">
+            {% for img in images %}
+                <p style="font-weight:bold;">{{ img.image_label }}<span class="fa fa-arrow-right"></span></p>
+                <img height="200" width="150" src="{{ img.image.url }}">
+                <small>On the: {{ img.pub_date }}</small>
+                <form action="{% url 'delete' pk=img.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>
+                </form>
+            {% endfor %}
+        </div>
+        <div class="col col-md-5" style="display: flex; flex-direction: column; border: 2px solid black; float:right;background-color: #f18973;">
+            <h1 class="btn btn-info">User's modifications and uploads</h1>
+            <h2 class="btn btn-warning">Modify your profile</h2>
+          <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ pform|crispy }}
+            {{ uform|crispy }}
+            <input type="submit" value="Update" class="btn btn-warning">
+          </form>
+
+          <hr><h2 class="btn btn-success">Add an image to your gallery profile</h2>
+          <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input type="submit" value="Add" class="btn btn-success">
+          </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
